@@ -57,6 +57,7 @@ sum(is.na(travel_reviews))  # Should return 0 if no missing values
 ```{r}
 boxplot(travel_reviews[, -1],
         main = "Boxplots of Travel Review Ratings",
+        xlab = "Destination Places",
         col = "lightblue")
 ```
 
@@ -66,9 +67,9 @@ boxplot(travel_reviews[, -1],
 # Load libraries
 library(tidyr)
 library(ggplot2)
-#library(corrplot)
+library(corrplot)
 library(dplyr)
-#library(factoextra)  # For clustering visualization
+library(factoextra)  # For clustering visualization
 library(cluster)  
 
 # Convert data into long format for ggplot
@@ -88,9 +89,40 @@ ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
   labs(title = "Boxplot of Ratings Across Travel Categories")
 ```
 
-# 7. 
+# 7. Correlation Analysis
 
-# 8. 
+```{r}
+# Compute correlation matrix (excluding User ID)
+cor_matrix <- cor(travel_reviews[, -1])
+
+# Display correlation heatmap
+corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.8)
+```
+
+# 8. Cluster Analysis
+
+```{r}
+# Compute within-cluster sum of squares (Elbow Method)
+set.seed(123)
+fviz_nbclust(travel_reviews[, -1], kmeans, method = "wss") +
+  labs(title = "Elbow Method for Optimal Clusters")
+
+# Applying K-Means Clustering
+set.seed(123)
+kmeans_result <- kmeans(travel_reviews[, -1], centers = 3, nstart = 25)  # Adjust centers as needed
+
+# Add cluster labels to dataset
+travel_reviews$Cluster <- as.factor(kmeans_result$cluster)
+
+# Visualize clusters using PCA
+# Select only numeric columns (excluding User ID and Cluster)
+numeric_data <- travel_reviews[, -c(1, ncol(travel_reviews))]  # Removes User ID and Cluster
+
+# Visualize clusters using PCA
+fviz_cluster(kmeans_result, data = numeric_data, geom = "point", ellipse.type = "convex") +
+  labs(title = "K-Means Clustering of Traveler Preferences")
+
+```
 
 # 9. Key Findings
 
