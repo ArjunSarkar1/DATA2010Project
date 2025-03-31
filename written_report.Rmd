@@ -31,6 +31,12 @@ It essentially consists of many reviews of East Asian places in 10 categories wh
 
 ## 3.1 Dataset Context
 
+```{r}
+# Loading dataset
+travel_reviews <- read.csv("tripadvisor_review.csv")
+head(travel_reviews)
+```
+
 The dataset contains 10 Features(excluding **User ID**) and 980 instances. Also, it is important to note that this dataset supports classification and clustering tasks.
 
 The 10 different types of travel destinations the travelers gave ratings on are **Art Galleries, Dance Clubs, Juice Bars, Restaurants, Museums, Resorts, Parks/Picnic Spots, Beaches, Theaters, and Religious Institutions**
@@ -40,11 +46,57 @@ The following is a mapping of each traveler rating:
 - Excellent (4), Very Good (3), Average (2), Poor (1), Terrible (0)
 
 # 4. Cleaning Up Dataset
-# 5. Data Summarization/Aggregation
-# 6. Data Visualization
-# 7. Key Findings
 
-# 8. Source
+```{r}
+# Checking for missing values!
+sum(is.na(travel_reviews))  # Should return 0 if no missing values
+```
+
+# 5. Data Summarization/Aggregation
+
+```{r}
+boxplot(travel_reviews[, -1],
+        main = "Boxplots of Travel Review Ratings",
+        col = "lightblue")
+```
+
+# 6. Data Visualization
+
+```{r}
+# Load libraries
+library(tidyr)
+library(ggplot2)
+#library(corrplot)
+library(dplyr)
+#library(factoextra)  # For clustering visualization
+library(cluster)  
+
+# Convert data into long format for ggplot
+
+long_data <- pivot_longer(travel_reviews, cols = -User.ID, names_to = "Category", values_to = "Rating")
+
+# Bar plot for each category
+ggplot(long_data, aes(x = Rating, fill = Category)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Ratings for Each Category", x = "Rating", y = "Count") +
+  theme_minimal()
+
+# Boxplots - Comparing Ratings Across Categories
+ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Boxplot of Ratings Across Travel Categories")
+```
+
+# 7. 
+
+# 8. 
+
+# 9. Key Findings
+
+# 10. Appendix: Full R Code
+
+# 11. Source
 
 Dataset Link: https://archive.ics.uci.edu/dataset/484/travel+reviews
 
