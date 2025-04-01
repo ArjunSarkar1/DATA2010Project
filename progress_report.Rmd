@@ -1,7 +1,7 @@
 ---
 title: "DATA 2010: Group Project"
 subtitle: "Progress Report"
-author: "Arjun Sarkar, Sachin Bhatt, Sahil Sharma, Gustavo Nunez"
+author: "Arjun Sarkar, Sachin Bhatt, Sahil Sharma, Gustavo Núñez de la Cruz"
 date: "March 14th 2025"
 output: pdf_document
 ---
