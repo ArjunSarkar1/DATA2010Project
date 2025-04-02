@@ -29,6 +29,8 @@ Here are the following questions we will be answering in our analysis.
 
 It essentially consists of many reviews of East Asian places in 10 categories which are in this collection. Our goal is to derive valuable insights from the dataset by analyzing it using statistical methods and data visualization.
 
+Dataset Source: UCI Machine Learning Repository. (2018). Uci.edu. https://archive.ics.uci.edu/dataset/484/travel+reviews
+
 ## 3.1 Dataset Context
 
 ```{r}
@@ -344,10 +346,7 @@ Categories like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate st
 
 ```
 
-# 9. Key Findings
+# 9. Conclusion
 
-# 10. Source
-Dataset Link: https://archive.ics.uci.edu/dataset/484/travel+reviews
-
-# 11. Appendix: Full R Code
+# 10. Appendix: Full R Code
 
