@@ -35,7 +35,7 @@ Dataset Source: UCI Machine Learning Repository. (2018). Uci.edu. https://archiv
 
 ```{r}
 # loading dataset
-travel.data <- read.csv("tripadvisor_review.csv",  header = TRUE, stringsAsFactors = FALSE)
+travel.data <- read.csv("tripadvisor_review.csv")
 head(travel.data,1)
 ```
 
@@ -398,7 +398,6 @@ hc_result <- hcut(data_clust, k = optimal_Num_Clusters)
 
 # Visualizing the Dendrogram 
 fviz_dend(hc_result, rect = TRUE)
-
 
 ```
 
