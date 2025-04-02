@@ -35,7 +35,7 @@ Dataset Source: UCI Machine Learning Repository. (2018). Uci.edu. https://archiv
 
 ```{r}
 # loading dataset
-travel.data <- read.csv("tripadvisor_review.csv")
+travel.data <- read.csv("tripadvisor_review.csv",  header = TRUE, stringsAsFactors = FALSE)
 head(travel.data,1)
 ```
 
@@ -323,6 +323,7 @@ Categories like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate st
 
 # 8. Cluster Analysis
 
+
 ```{r}
 # Compute within-cluster sum of squares (Elbow Method)
 # set.seed(123)
@@ -344,7 +345,63 @@ Categories like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate st
 # fviz_cluster(kmeans_result, data = numeric_data, geom = "point", ellipse.type = "convex") +
   # labs(title = "K-Means Clustering of Traveler Preferences")
 
+
+
+
+
+
+
+
+
 ```
+
+
+```{r}
+
+# setting row names to the UserID
+row.names(travel.data) <- travel.data$User.ID
+
+# Selecting only numeric category columns for clustering
+data_clust <- travel.data[,-1]
+
+# K-Means Clustering
+
+# Determining the optimal number of clusters via the silhouette method
+fviz_nbclust(data_clust, kmeans, method = "silhouette")
+
+```
+*We can see from above silhouette plot the optimal number of clusters is k = 2.*
+
+```{r}
+# Running K-Means Clustering
+library(factoextra)
+library(cluster)
+
+# For reproducibility
+set.seed(123)
+optimal_Num_Clusters <- 2
+kmeans_result <- kmeans(data_clust, centers = optimal_Num_Clusters, nstart = 25)
+
+# Visualize the clusters
+fviz_cluster(kmeans_result, data = data_clust, geom = "point")
+
+# Helps to view cluster center to see which categories drive the differences
+kmeans_result$centers
+
+```
+```{r}
+
+# Hierarchical clustering
+
+# Performing hierarchical clustering with k = 2 optimal clusters
+hc_result <- hcut(data_clust, k = optimal_Num_Clusters)
+
+# Visualizing the Dendrogram 
+fviz_dend(hc_result, rect = TRUE)
+
+
+```
+
 
 # 9. Conclusion
 
