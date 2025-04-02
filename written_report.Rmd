@@ -32,7 +32,7 @@ It essentially consists of many reviews of East Asian places in 10 categories wh
 ## 3.1 Dataset Context
 
 ```{r}
-# Loading dataset
+# loading dataset
 travel.data <- read.csv("tripadvisor_review.csv")
 head(travel.data,1)
 ```
@@ -54,8 +54,8 @@ In this section, we will check for missing values in the dataset. Missing values
 We'll use the `is.na()` function to check for missing values, and `colSums()` to sum up the number of missing values in each column.
 
 ```{r}
-# Check for missing values in each column (if any)
-# Sum of missing values per column
+# checking for missing values in each column (if any)
+# sum of missing values per column
 colSums(is.na(travel.data))
 ```
 
@@ -64,7 +64,7 @@ colSums(is.na(travel.data))
 Since `User.ID` is unique for each row, we don't need to worry about duplicates. Therefore, checking for duplicate rows might not be a high priority but it is still a good idea to verify. However, we do bring this up as it can distort results, especially when clustering or other statistical tests.
 
 ```{r}
-# Check how many duplicate rows there are
+# checking how many duplicate rows there are
 sum(duplicated(travel.data))
 ```
 
@@ -111,22 +111,6 @@ We calculate summary statistics, such as mean, median, standard deviation, and t
 # summary statistics for all destination places
 summary.stats <- summary(travelUpdate.data[, -1])
 summary.stats
-
-# Calculate mean, median, standard deviation, and five-number summary
-# mean.value <- colMeans(travelUpdate.data[, -1])
-# median.value <- apply(X=travelUpdate.data[, -1], MARGIN = 2, FUN=median)
-# sd.value <- apply(X=travelUpdate.data[, -1], MARGIN=2, FUN=sd)
-# 
-# # Combine into a data frame for easy inspection
-# summary.df <- data.frame(Mean = mean.value,
-#                          Median = median.value,
-#                          Standard_Deviation = sd.value,
-#                          Min = summary.stats[1, ],
-#                          Q1 = summary.stats[2, ],
-#                          Median_FiveNum = summary.stats[3, ],
-#                          Q3 = summary.stats[4, ],
-#                          Max = summary.stats[5, ])
-# head(summary.df)
 ```
 
 *Highly Rated Categories:*
@@ -215,9 +199,6 @@ ggplot(long_data.temp, aes(x = Rating, fill = Category, color = Category)) +
 
 - `Dance Clubs` exhibit a bimodal trend, reinforcing the inconsistent user experience observed earlier
 
-*In details:*
-From the above density plot, we observe that `Restaurants` suggests limited interest or dissatisfaction among users as it shares nearly similar high peaks with `Beaches` but `Restaurants` is rated much lower compared to `Beaches` where `Beaches` are rated close to 3. `Religious Institutions`, `Resorts` and `Museums` show wider curves, reflecting diverse opinions or inconsistent quality across locations. `Dance Bars` shows two peaks, indicating a bimodal distribution of ratings where there's a moderate variability in the ratings. This suggests that user satisfaction with dance clubs is inconsistent as some had good experiences, while others' expectations have not been met.
-
 ### 5.33 Investigating Parks/Picnic Spots
 
 Since `Parks/Picnic Spots` displayed an extreme peak, we analyze its rating distribution separately using a histogram.
@@ -270,24 +251,6 @@ ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
 
 - `Dance Clubs` display many low outliers, reinforcing the polarized user experience observed in density plots
 
-
-
-
-Central Tendencies:
-In terms of central tendency, difficult to see but can determine that `Parks/Picnic Spots` have have the highest median ratings (above 3) followed by `Beaches` and then `Religious Institutions`. `Resorts` and `Theaters` have median ratings close to or below 2, indicating a lower overall preference. `Restaurants` have the lowest medians, suggesting they are not as popular among travelers.
-
-Spread:
-Right away we notice that `Juice Bars`, `Resorts`, `Museums`, `Religious Institutions` and `Dance Clubs` have large interquartile ranges (IQR) in that order, indicating that ratings vary widely among different travelers. Whereas, good exampls such as `Parks/Picnic Spots` and `Beaches` have relatively shorter IQRs, meaning that ratings are more consistent.
-
-Outliers:
-In the graph above, we notice several destinations, including `Restaurants`, `Dance Clubs`, `Art Galleries` and `Theaters`, exhibit a significant number of outliers. These outliers indicate that while most ratings fall within a certain range, there are some extremely high or low ratings given by travelers. `Dance Clubs` show many low outliers, suggesting that some travelers had particularly bad experiences.
-
-Overall:
-- `Resorts` have a broad spread but seem to cluster around the middle ratings, indicating a mix of opinions.
-- `Juice Bars` show a high variability (large IQR), meaning travelers have very different experiences with them where some rating them as good while others find them extremely terrible.
-- `Parks/Picnic Spots` have an extremely high concentrated range of ratings, meaning travelers tend to agree more on their experiences and in this for this destination, excellent high rating (above 3).
-
-
 ## 5.4 Data Summarization Key Findings
 
 **Overall Rating Trends:**
@@ -311,6 +274,10 @@ Overall:
 - `Parks/Picnic Spots` have extremely concentrated ratings, making them an outlier in terms of consistency
 
 # 6. Correlation Analysis
+
+Finding trends in traveler preferences requires an understanding of the connections between various travel categories. By identifying clusters of related interests or divergent preferences, correlation analysis assists us in determining whether particular categories have a tendency to be ranked similarly. Whereas a strong negative correlation denotes an ability for preferring one category over another, a strong positive correlation suggests that tourists who like one kind of place may also like another.
+
+# 6.1 Correlation Matrix
 
 ```{r}
 # computing correlation matrix (excluding User ID)
