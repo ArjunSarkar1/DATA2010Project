@@ -33,8 +33,8 @@ It essentially consists of many reviews of East Asian places in 10 categories wh
 
 ```{r}
 # Loading dataset
-travel_reviews <- read.csv("tripadvisor_review.csv")
-head(travel_reviews)
+travel.data <- read.csv("tripadvisor_review.csv")
+head(travel.data,1)
 ```
 
 The dataset contains 10 Features(excluding **User ID**) and 980 instances. Also, it is important to note that this dataset supports classification and clustering tasks.
@@ -47,88 +47,340 @@ The following is a mapping of each traveler rating:
 
 # 4. Cleaning Up Dataset
 
+In this section, we will check for missing values in the dataset. Missing values can lead to incorrect analysis results, so it's crucial to address them early on. 
+
+## 4.1 Checking for Missing Values
+
+We'll use the `is.na()` function to check for missing values, and `colSums()` to sum up the number of missing values in each column.
+
 ```{r}
-# Checking for missing values!
-sum(is.na(travel_reviews))  # Should return 0 if no missing values
+# Check for missing values in each column (if any)
+# Sum of missing values per column
+colSums(is.na(travel.data))
 ```
 
-# 5. Data Summarization/Aggregation
+## 4.2 Duplicate Rows
+
+Since `User.ID` is unique for each row, we don't need to worry about duplicates. Therefore, checking for duplicate rows might not be a high priority but it is still a good idea to verify. However, we do bring this up as it can distort results, especially when clustering or other statistical tests.
 
 ```{r}
-boxplot(travel_reviews[, -1],
-        main = "Boxplots of Travel Review Ratings",
-        xlab = "Destination Places",
-        col = "lightblue")
+# Check how many duplicate rows there are
+sum(duplicated(travel.data))
 ```
 
-# 6. Data Visualization
+## 4.3 Replacing Column Names
+
+We figured to introduce more meaningful column names representing each destination paces other than having it as `Category 1, 2 ...` giving it a more clean and polished look.
 
 ```{r}
-# Load libraries
-library(tidyr)
-library(ggplot2)
-library(corrplot)
-library(dplyr)
-library(factoextra)  # For clustering visualization
-library(cluster)  
+# destination names
+new_column_names <- c("Art Galleries", "Dance Clubs", "Juice Bars", 
+                      "Restaurants","Museums", "Resorts", "Parks/Picnic Spots",
+                      "Beaches", "Theaters", "Religious Institutions")
 
-# Convert data into long format for ggplot
+# reserving first column as it's `User.ID`
+# replace the rest of column names with the destination names
+colnames(travel.data)[-1] <- new_column_names
 
-long_data <- pivot_longer(travel_reviews, cols = -User.ID, names_to = "Category", values_to = "Rating")
+# storing it in another variable
+travelUpdate.data <- travel.data
+head(travelUpdate.data,1)
+```
 
-# Bar plot for each category
+
+# 5. Data Summarization
+
+## 5.1 Loading Libraries
+
+Prior to conducting our analysis efficiently, we load essential R libraries for data manipulation, visualization, correlation analysis, and clustering.
+
+```{r}
+library(dplyr)       # Data manipulation
+library(tidyr)       # Data transformation
+library(ggplot2)     # Data visualization
+library(corrplot)    # Correlation analysis
+library(factoextra)  # Clustering analysis
+library(cluster)     # Clustering algorithms
+```
+
+## 5.2 Summary Statistics
+
+We calculate summary statistics, such as mean, median, standard deviation, and the five-number summary (minimum, Q1, median, Q3, maximum) for every travel category in order to obtain a preliminary comprehension of the dataset.
+
+```{r}
+# summary statistics for all destination places
+summary.stats <- summary(travelUpdate.data[, -1])
+summary.stats
+
+# Calculate mean, median, standard deviation, and five-number summary
+# mean.value <- colMeans(travelUpdate.data[, -1])
+# median.value <- apply(X=travelUpdate.data[, -1], MARGIN = 2, FUN=median)
+# sd.value <- apply(X=travelUpdate.data[, -1], MARGIN=2, FUN=sd)
+# 
+# # Combine into a data frame for easy inspection
+# summary.df <- data.frame(Mean = mean.value,
+#                          Median = median.value,
+#                          Standard_Deviation = sd.value,
+#                          Min = summary.stats[1, ],
+#                          Q1 = summary.stats[2, ],
+#                          Median_FiveNum = summary.stats[3, ],
+#                          Q3 = summary.stats[4, ],
+#                          Max = summary.stats[5, ])
+# head(summary.df)
+```
+
+*Highly Rated Categories:*
+
+- `Parks/Picnic Spots` have the highest average rating (3.18) with low variation (SD = 0.0078), indicating consistent positive traveler satisfaction
+
+- `Beaches` (Mean = 2.83) and `Religious Institutions` (Mean = 2.80) also receive high ratings, suggesting positive traveler experiences
+
+*Moderate Ratings & Mixed Opinions:*
+
+- `Resorts` (Mean = 1.84, SD = 0.54) and `Theaters` (Mean = 1.57, SD = 0.36) show moderate ratings with some variation, indicating diverse traveler preferences
+
+- `Dance Clubs `(Mean = 1.35, SD = 0.48) display significant spread, hinting at conflicting experiences
+
+*Lower-Rated Categories:*
+
+- `Restaurants` have the lowest average rating (0.53) and low variation, suggesting overall dissatisfaction among travelers
+
+- `Juice Bars` (Mean = 1.01, SD = 0.79) show high variability, meaning some travelers enjoyed them while others had poor experiences
+
+**Category-Specific Trends:**
+
+- `Art Galleries` and `Museums` have similar moderate ratings ($\approx0.89-0.94$) with slightly lower variability, implying generally favorable but not exceptional experiences
+
+- `Dance Clubs` have a broad spread (SD = 0.48), possibly due to differences in expectations or quality between locations
+
+**Overall Summary:**
+
+The data suggests that outdoor locations (Parks, Beaches, Religious Institutions) receive higher and more consistent ratings, while urban entertainment spots (Dance Clubs, Theaters, Resorts) show mixed traveler opinions. Restaurants and Juice Bars appear to be less favored, with notable dissatisfaction among travelers.
+
+## 5.3 Data Distribution Analysis
+
+## 5.31 Density Plots for Individual Travel Categories
+
+For each category, we create a distinct density plot to show the rating distribution. This method avoids clutter and makes insights clearer.
+
+```{r}
+# Converting `travelUpdate.data` into long data format for ggplot visualization
+# excluding the `User.ID` column
+long_data <- pivot_longer(travelUpdate.data, cols = c(-User.ID), 
+                          names_to = "Category", values_to = "Rating")
+
+# Density plot for each category (separate plots)
 ggplot(long_data, aes(x = Rating, fill = Category)) +
-  geom_bar(position = "dodge") +
-  labs(title = "Distribution of Ratings for Each Category", x = "Rating", y = "Count") +
-  theme_minimal()
+  geom_density(alpha = 0.5) +
+  labs(title = "Density Plot of Ratings for Each Travel Category",
+       x = "Rating", y = "Density") +
+  theme_minimal() +
+  facet_wrap(~ Category, scales = "free_y") + # Creates separate density plots
+  theme(strip.text = element_text(size = 7),  # Increase facet label font size
+        panel.spacing = unit(1, "lines"))  # Increase space between facets
 
-# Boxplots - Comparing Ratings Across Categories
-ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
-  geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+```
+
+**Insights:**
+
+- Separate density graphs avoid overlap and are easier to read
+
+- Some locations have wider curves that reflect a range of traveler perspectives, others have narrow peaks that indicate consistent ratings. 
+
+- `Dance Clubs` have shown a bimodal distribution, suggesting conflicting opinions where some travelers loved them, while others had negative experiences
+
+### 5.32 Combined Density Plot
+
+A combined density plot allows us to compare rating distributions across different categories all in one place. However, `Parks/Picnic Spots` had an extreme peak, so we exclude it for better visualization.
+
+```{r}
+# Density Plot for each category (all together excluding `Parks/Picnic Spots`)
+long_data.temp <- pivot_longer(travelUpdate.data, 
+                               cols = c(-User.ID,-"Parks/Picnic Spots"), 
+                               names_to = "Category", values_to = "Rating")
+
+ggplot(long_data.temp, aes(x = Rating, fill = Category, color = Category)) +
+  geom_density(alpha = 0.3) + 
+  labs(title = "Density Distribution of Ratings for Each Category", 
+       x = "Rating", y = "Density")
+```
+
+**Insights:**
+
+- `Restaurants` show low ratings, indicating potential dissatisfaction
+
+- `Beaches` have higher peaks around rating 3, suggesting positive traveler experiences
+
+- `Religious Institutions`, Resorts, and Museums display wider curves, reflecting diverse traveler opinions
+
+- `Dance Clubs` exhibit a bimodal trend, reinforcing the inconsistent user experience observed earlier
+
+*In details:*
+From the above density plot, we observe that `Restaurants` suggests limited interest or dissatisfaction among users as it shares nearly similar high peaks with `Beaches` but `Restaurants` is rated much lower compared to `Beaches` where `Beaches` are rated close to 3. `Religious Institutions`, `Resorts` and `Museums` show wider curves, reflecting diverse opinions or inconsistent quality across locations. `Dance Bars` shows two peaks, indicating a bimodal distribution of ratings where there's a moderate variability in the ratings. This suggests that user satisfaction with dance clubs is inconsistent as some had good experiences, while others' expectations have not been met.
+
+### 5.33 Investigating Parks/Picnic Spots
+
+Since `Parks/Picnic Spots` displayed an extreme peak, we analyze its rating distribution separately using a histogram.
+
+```{r}
+# Histogram for Parks/Picnic Spots Ratings
+ggplot(long_data %>% filter(Category == "Parks/Picnic Spots"), 
+       aes(x = Rating)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
+  labs(title = "Histogram of Ratings for Parks/Picnic Spots",
+       x = "Rating", y = "Count") +
+  theme_minimal()
+```
+
+**Insights:**
+
+- The histogram reveals that almost all 980 ratings fall between 2.5 and 3.5, forming a single, dominant peak
+
+- This suggests that travelers consistently rate `Parks/Picnic Spots` favorably, with low variation in opinion
+
+### 5.34 Boxplot Analysis - Comparing Ratings Across Categories
+
+Hopefully, the boxplots provide a comparative visualization of ratings, highlighting central tendencies, spread, and outliers for our needs.
+
+```{r}
+ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) + 
+  theme(axis.text.x= element_text(angle = 45, hjust = 1)) + geom_boxplot() +
   labs(title = "Boxplot of Ratings Across Travel Categories")
 ```
 
-# 7. Correlation Analysis
+**Interpretation & Insights:**
+
+*Central Tendencies*
+
+- `Parks/Picnic Spots` have the highest median rating (~3.0), followed by `Beaches` and `Religious Institutions`.
+
+- `Resorts` and `Theaters` have lower median ratings (~2.0), indicating lower traveler preference
+
+- `Restaurants` have the lowest median, suggesting they are the least favored destination
+
+*Spread of Ratings*
+
+- `Juice Bars`, `Resorts`, `Museums`, `Religious Institutions`, and `Dance Clubs` exhibit large interquartile ranges (IQRs), indicating high variability in traveler ratings
+
+- `Parks/Picnic Spots` and `Beaches` have small IQRs, suggesting consistent traveler experiences
+
+*Outliers*
+
+- `Restaurants`, `Dance Clubs`, `Art Galleries`, and `Theaters` show numerous outliers, indicating that while most travelers rated them within a certain range, some gave extreme ratings
+
+- `Dance Clubs` display many low outliers, reinforcing the polarized user experience observed in density plots
+
+
+
+
+Central Tendencies:
+In terms of central tendency, difficult to see but can determine that `Parks/Picnic Spots` have have the highest median ratings (above 3) followed by `Beaches` and then `Religious Institutions`. `Resorts` and `Theaters` have median ratings close to or below 2, indicating a lower overall preference. `Restaurants` have the lowest medians, suggesting they are not as popular among travelers.
+
+Spread:
+Right away we notice that `Juice Bars`, `Resorts`, `Museums`, `Religious Institutions` and `Dance Clubs` have large interquartile ranges (IQR) in that order, indicating that ratings vary widely among different travelers. Whereas, good exampls such as `Parks/Picnic Spots` and `Beaches` have relatively shorter IQRs, meaning that ratings are more consistent.
+
+Outliers:
+In the graph above, we notice several destinations, including `Restaurants`, `Dance Clubs`, `Art Galleries` and `Theaters`, exhibit a significant number of outliers. These outliers indicate that while most ratings fall within a certain range, there are some extremely high or low ratings given by travelers. `Dance Clubs` show many low outliers, suggesting that some travelers had particularly bad experiences.
+
+Overall:
+- `Resorts` have a broad spread but seem to cluster around the middle ratings, indicating a mix of opinions.
+- `Juice Bars` show a high variability (large IQR), meaning travelers have very different experiences with them where some rating them as good while others find them extremely terrible.
+- `Parks/Picnic Spots` have an extremely high concentrated range of ratings, meaning travelers tend to agree more on their experiences and in this for this destination, excellent high rating (above 3).
+
+
+## 5.4 Data Summarization Key Findings
+
+**Overall Rating Trends:**
+
+- `Parks/Picnic Spots` have high, consistent ratings
+
+- `Beaches`, `Religious Institutions`, and `Resorts` receive moderately high ratings, but opinions vary
+
+- `Restaurants` and `Theaters` are less preferred, with lower median ratings
+
+**Traveler Preferences & Diversity of Ratings:**
+
+- Locations such as `Juice Bars` and `Museums` have large variations, indicating diverse user experiences
+
+- `Dance Clubs` have bimodal ratings, suggesting mixed traveler opinions
+
+**Outliers & Unexpected Trends:**
+
+- `Dance Clubs` show many low outliers, reinforcing conflicting experiences
+
+- `Parks/Picnic Spots` have extremely concentrated ratings, making them an outlier in terms of consistency
+
+# 6. Correlation Analysis
 
 ```{r}
-# Compute correlation matrix (excluding User ID)
-cor_matrix <- cor(travel_reviews[, -1])
+# computing correlation matrix (excluding User ID)
+correlation.map <- cor(travelUpdate.data[, -1])
 
-# Display correlation heatmap
-corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.8)
+# displaying correlation heatmap
+corrplot(correlation.map,
+         addCoef.col = "black",   # Adding black coefficients
+         cl.cex = 0.7,            # Reduce legend font size
+         method = "color", 
+         type = "full",           # Display upper half
+         tl.col = "black",        # Black text for labels
+         tl.srt = 50,             # Rotate labels 45°
+         number.cex = 0.6,        # Reduce coefficient font size
+         tl.cex = 0.7,            # Reduce variable label size
+         diag = TRUE,             # Hide diagonal
+         addgrid.col = "black")   # Light gray borders
 ```
+
+**Insights:**
+
+*Strong Positive Correlations:*
+
+- `Juice Bars` and `Parks/Picnic Spots` have the strongest positive correlation (0.75)
+
+- `Museums` and `Resorts` are also positively correlated (0.58)
+
+*Strong Negative Correlations:*
+
+- `Religious Institutions` and `Parks/Picnic Spots` show a strong negative correlation (-0.71)
+
+- `Religious Institutions` and `Juice Bars` also have a notable negative correlation (-0.44)
+
+*Weaker Correlations:*
+
+- Many locations, such as `Art Galleries` and `Dance Clubs`, show weak correlations (-0.19)
+
+*Overall:*
+
+Categories like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate stronger relationships with other variables, while categories like `Religious Institutions` tend to show weaker or negative correlations. The plot will be highly useful for identifying clusters of related activities or inversely related categories that may represent contrasting preferences or behaviors.
 
 # 8. Cluster Analysis
 
 ```{r}
 # Compute within-cluster sum of squares (Elbow Method)
-set.seed(123)
-fviz_nbclust(travel_reviews[, -1], kmeans, method = "wss") +
-  labs(title = "Elbow Method for Optimal Clusters")
+# set.seed(123)
+# fviz_nbclust(travel_reviews[, -1], kmeans, method = "wss") +
+#   labs(title = "Elbow Method for Optimal Clusters")
 
 # Applying K-Means Clustering
-set.seed(123)
-kmeans_result <- kmeans(travel_reviews[, -1], centers = 3, nstart = 25)  # Adjust centers as needed
+# set.seed(123)
+# kmeans_result <- kmeans(travel_reviews[, -1], centers = 3, nstart = 25)  # Adjust centers as needed
 
 # Add cluster labels to dataset
-travel_reviews$Cluster <- as.factor(kmeans_result$cluster)
+# travel_reviews$Cluster <- as.factor(kmeans_result$cluster)
 
 # Visualize clusters using PCA
 # Select only numeric columns (excluding User ID and Cluster)
-numeric_data <- travel_reviews[, -c(1, ncol(travel_reviews))]  # Removes User ID and Cluster
+# numeric_data <- travel_reviews[, -c(1, ncol(travel_reviews))]  # Removes User ID and Cluster
 
 # Visualize clusters using PCA
-fviz_cluster(kmeans_result, data = numeric_data, geom = "point", ellipse.type = "convex") +
-  labs(title = "K-Means Clustering of Traveler Preferences")
+# fviz_cluster(kmeans_result, data = numeric_data, geom = "point", ellipse.type = "convex") +
+  # labs(title = "K-Means Clustering of Traveler Preferences")
 
 ```
 
 # 9. Key Findings
 
-# 10. Appendix: Full R Code
-
-# 11. Source
-
+# 10. Source
 Dataset Link: https://archive.ics.uci.edu/dataset/484/travel+reviews
+
+# 11. Appendix: Full R Code
 
