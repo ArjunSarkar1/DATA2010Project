@@ -97,12 +97,12 @@ head(travelUpdate.data,1)
 Prior to conducting our analysis efficiently, we load essential R libraries for data manipulation, visualization, correlation analysis, and clustering.
 
 ```{r}
-suppressPackageStartupMessages(library(dplyr))       # Data manipulation
-library(tidyr)       # Data transformation
-library(ggplot2)     # Data visualization
-suppressPackageStartupMessages(library(corrplot))    # Correlation analysis
-suppressPackageStartupMessages(library(factoextra))  # Clustering analysis
-library(cluster)     # Clustering algorithms
+suppressPackageStartupMessages(library(dplyr))      # Data manipulation
+library(tidyr)                                      # Data transformation
+library(ggplot2)                                    # Data visualization
+suppressPackageStartupMessages(library(corrplot))   # Correlation analysis
+suppressPackageStartupMessages(library(factoextra)) # Clustering analysis
+library(cluster)                                    # Clustering algorithms
 suppressPackageStartupMessages(library(dendextend)) # Hierarchical Analysis (Dendograms)
 ```
 
@@ -467,12 +467,12 @@ head(travelUpdate.data,1)
 ## 9.5 Loading Libraries
 
 ```{r}
-library(dplyr)       # Data manipulation
-library(tidyr)       # Data transformation
-library(ggplot2)     # Data visualization
-library(corrplot)    # Correlation analysis
-library(factoextra)  # Clustering analysis
-library(cluster)     # Clustering algorithms
+suppressPackageStartupMessages(library(dplyr))      # Data manipulation
+library(tidyr)                                      # Data transformation
+library(ggplot2)                                    # Data visualization
+suppressPackageStartupMessages(library(corrplot))   # Correlation analysis
+suppressPackageStartupMessages(library(factoextra)) # Clustering analysis
+library(cluster)                                    # Clustering algorithms
 suppressPackageStartupMessages(library(dendextend)) # Hierarchical Analysis (Dendograms)
 ```
 
