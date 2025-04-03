@@ -41,7 +41,7 @@ head(travel.data,1)
 
 The dataset contains 10 Features(excluding **User ID**) and 980 instances. Also, it is important to note that this dataset supports classification and clustering tasks.
 
-The 10 different types of travel destinations the travelers gave ratings on are **Art Galleries, Dance Clubs, Juice Bars, Restaurants, Museums, Resorts, Parks/Picnic Spots, Beaches, Theaters, and Religious Institutions**
+The 10 different types of travel categories the travelers gave ratings on are **Art Galleries, Dance Clubs, Juice Bars, Restaurants, Museums, Resorts, Parks/Picnic Spots, Beaches, Theaters, and Religious Institutions**
 
 The following is a mapping of each traveler rating: 
 
@@ -72,7 +72,7 @@ sum(duplicated(travel.data))
 
 ## 4.3 Replacing Column Names
 
-We figured to introduce more meaningful column names representing each destination paces other than having it as `Category 1, 2 ...` giving it a more clean and polished look.
+We figured to introduce more meaningful column names representing each location other than having it as `Category 1, 2 ...` giving it a more clean and polished look.
 
 ```{r}
 # destination names
@@ -97,11 +97,11 @@ head(travelUpdate.data,1)
 Prior to conducting our analysis efficiently, we load essential R libraries for data manipulation, visualization, correlation analysis, and clustering.
 
 ```{r}
-library(dplyr)       # Data manipulation
+suppressPackageStartupMessages(library(dplyr))       # Data manipulation
 library(tidyr)       # Data transformation
 library(ggplot2)     # Data visualization
-library(corrplot)    # Correlation analysis
-library(factoextra)  # Clustering analysis
+suppressPackageStartupMessages(library(corrplot))    # Correlation analysis
+suppressPackageStartupMessages(library(factoextra))  # Clustering analysis
 library(cluster)     # Clustering algorithms
 suppressPackageStartupMessages(library(dendextend)) # Hierarchical Analysis (Dendograms)
 ```
@@ -111,7 +111,7 @@ suppressPackageStartupMessages(library(dendextend)) # Hierarchical Analysis (Den
 We calculate summary statistics, such as mean, median, standard deviation, and the five-number summary (minimum, Q1, median, Q3, maximum) for every travel category in order to obtain a preliminary comprehension of the dataset.
 
 ```{r}
-# summary statistics for all destination places
+# summary statistics for all locations
 summary.stats <- summary(travelUpdate.data[, -1])
 summary.stats
 ```
@@ -234,7 +234,7 @@ ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
 
 *Traveler Preferences & Ratings*
 
-- Destinations such as `Juice Bars` and `Museums` have large variations, indicating diverse user experiences. `Dance Clubs` have bimodal ratings, suggesting mixed traveler opinions.
+- Locations such as `Juice Bars` and `Museums` have large variations, indicating diverse user experiences. `Dance Clubs` have bimodal ratings, suggesting mixed traveler opinions.
 
 *Unexpected Trends & Outliers*
 
@@ -280,7 +280,7 @@ corrplot(correlation.map,
 
 *Overall*
 
-- Destinations like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate stronger relationships with others, whereas `Religious Institutions` tend to show weaker or negative correlations. The plot will be highly useful for identifying clusters in the sections later on.
+- Locations like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate stronger relationships with others, whereas `Religious Institutions` tend to show weaker or negative correlations. The plot will be highly useful for identifying clusters in the sections later on.
 
 # 7. Cluster Analysis
 
