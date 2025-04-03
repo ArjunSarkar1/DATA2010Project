@@ -212,7 +212,8 @@ ggplot(long_data %>% filter(Category == "Parks/Picnic Spots"),
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Ratings for Parks/Picnic Spots",
        x = "Rating", y = "Count") +
-  theme_minimal()
+  theme_minimal() +
+  xlim(0, 4)
 ```
 
 **Insights:**
