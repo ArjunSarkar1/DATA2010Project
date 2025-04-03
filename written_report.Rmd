@@ -159,11 +159,13 @@ long_data <- pivot_longer(travelUpdate.data, cols = c(-User.ID),
 ggplot(long_data, aes(x = Rating, fill = Category)) +
   geom_density(alpha = 0.5) +
   labs(title = "Density Plot of Ratings for Each Travel Category",
-       x = "Rating", y = "Density") +
+       x = "Rating", y = "Density") + 
   theme_minimal() +
   facet_wrap(~ Category, scales = "free_y") + # Creates separate density plots
   theme(strip.text = element_text(size = 7),  # Increase facet label font size
         panel.spacing = unit(1, "lines"))  # Increase space between facets
+
+
 
 ```
 
@@ -211,8 +213,10 @@ ggplot(long_data %>% filter(Category == "Parks/Picnic Spots"),
        aes(x = Rating)) +
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Ratings for Parks/Picnic Spots",
-       x = "Rating", y = "Count") +
+       x = "Rating", y = "Count") +coord_cartesian(xlim = c(0, 4)) +
   theme_minimal()
+
+
 ```
 
 **Insights:**
