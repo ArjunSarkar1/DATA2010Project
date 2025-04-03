@@ -27,13 +27,15 @@ Here are the following questions we will be answering in our analysis.
 
 # 3. Dataset Selection
 
-It essentially consists of many reviews of East Asian places in 10 categories which are in this collection. Our goal is to derive valuable insights from the dataset by analyzing it using statistical methods and data visualization.
+It essentially consists of many reviews of East Asian places in 10 categories which are in this collection. Each entry contains the average rating for each category of a place. Our goal is to derive valuable insights from the dataset by analyzing it using statistical methods and data visualization.
 
 ## 3.1 Dataset Context
 
 ```{r}
 # Loading dataset
+library(tidyverse)
 travel_reviews <- read.csv("tripadvisor_review.csv")
+travel_reviews = travel_reviews %>% rename(art_galleries = Category.1, dance_clubs = Category.2, juice_bars = Category.3, restaurants = Category.4, museums = Category.5, resorts = Category.6, parks_picnic_spots = Category.7, beaches = Category.8, theaters = Category.9, religious_institutions = Category.10)
 head(travel_reviews)
 ```
 
@@ -55,10 +57,51 @@ sum(is.na(travel_reviews))  # Should return 0 if no missing values
 # 5. Data Summarization/Aggregation
 
 ```{r}
+#Visual representation of the five number summary
 boxplot(travel_reviews[, -1],
         main = "Boxplots of Travel Review Ratings",
-        xlab = "Destination Places",
-        col = "lightblue")
+        xlab = "Categories",
+        col = c("#E6194B", "#3CB44B", "#FF8C00", "#008000", "#911EB4", 
+                "#46F0F0", "#F032E6", "#FFD700", "#008080", "#A9A9A9"),
+        cex.axis = 0.4)
+
+#Calculate summary statistics
+means = travel_reviews %>% summarise(across(-1, mean)) 
+medians = travel_reviews %>% summarise(across(-1, median))
+sds = travel_reviews %>% summarise(across(-1, sd))
+iqrs = travel_reviews %>% summarise(across(-1, IQR))
+
+# Add row names
+means <- means %>% mutate(statistic = "Mean")
+medians <- medians %>% mutate(statistic = "Median")
+sds <- sds %>% mutate(statistic = "Standard Deviation")
+iqrs <- iqrs %>% mutate(statistic = "IQR")
+
+#Make dataset with all the statistics of each category
+summary_stats <- bind_rows(means, medians, sds, iqrs)
+summary_stats <- summary_stats %>% select(statistic, everything())
+summary_stats
+
+
+#Identifying outliers#
+
+#Outliers for art galleries
+q1 = quantile(travel_reviews$art_galleries, 0.25)
+q3 = quantile(travel_reviews$art_galleries, 0.75)
+iqr = pull(summary_stats %>% 
+  filter(statistic == "IQR") %>% 
+  select(art_galleries)) 
+lb = q1 - (iqr * 1.5)
+ub = q3 + (iqr * 1.5)
+
+art_galleries_vec = travel_reviews %>% pull(art_galleries)
+low_outliers_art_galleries = art_galleries_vec[art_galleries_vec < lb]
+high_outliers_art_galleries = art_galleries_vec[art_galleries_vec > ub]
+#Low outliers for art galleries
+low_outliers_art_galleries
+#High outliers for art galleries
+high_outliers_art_galleries
+
 ```
 
 # 6. Data Visualization
