@@ -114,6 +114,14 @@ We calculate summary statistics, such as mean, median, standard deviation, and t
 # summary statistics for all locations
 summary.stats <- summary(travelUpdate.data[, -1])
 summary.stats
+
+```
+
+Let's present the standard deviations.
+
+```{r}
+# standard deviations for all categories
+sapply(travelUpdate.data[, -1], sd)
 ```
 
 *Highly Rated Categories*
@@ -130,7 +138,7 @@ summary.stats
 
 *Category-Specific Trends*
 
-- `Art Galleries` and `Museums` have similar moderate ratings ($\approx0.89-0.94$) with slightly lower variability, implying generally favorable but not exceptional experiences.`Dance Clubs` have a broad spread (SD = 0.48), possibly due to differences in expectations or quality between locations
+- `Art Galleries` and `Museums` have similar low ratings ($\approx0.89-0.94$) with slightly lower variability, implying generally unfavorable experiences. `Dance Clubs` have a broad spread (SD = 0.48), possibly due to differences in expectations or quality between locations.
 
 *Summary*
 
@@ -223,7 +231,7 @@ ggplot(long_data, aes(x = Category, y = Rating, fill = Category)) +
 
 *Outliers*
 
-- `Restaurants`, `Dance Clubs`, `Art Galleries`, and `Theaters` show numerous outliers, indicating that while most travelers rated them within a certain range, some gave extreme ratings. `Dance Clubs` display many low outliers, further supporting the contrasting user experience observed in the Density Plots for Individual Travel Categories section.
+- `Restaurants`, `Dance Clubs`, `Art Galleries`, and `Theaters` show numerous outliers, indicating that while most travelers rated them within a certain range, some gave extreme ratings. Although `Restaurants` have the lowest median, on the contrary, a moderate amount of users rate it highly as due to better experiences as displayed on the boxplot. `Dance Clubs` display many low outliers, further supporting the contrasting user experience observed in the Density Plots for Individual Travel Categories section.
 
 
 ## 5.4 Data Summarization Key Findings
