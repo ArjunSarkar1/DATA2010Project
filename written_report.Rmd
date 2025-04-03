@@ -492,6 +492,11 @@ summary.stats <- summary(travelUpdate.data[, -1])
 summary.stats
 ```
 
+```{r}
+# standard deviations for all categories
+sapply(travelUpdate.data[, -1], sd)
+```
+
 ## 9.7 Density Plots for Individual Travel Categories
 
 ```{r}
