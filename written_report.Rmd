@@ -327,39 +327,6 @@ Categories like `Parks/Picnic Spots`, `Juice Bars`, and `Museums` demonstrate st
 
 # 8. Cluster Analysis
 
-
-```{r}
-# Compute within-cluster sum of squares (Elbow Method)
-# set.seed(123)
-# fviz_nbclust(travel_reviews[, -1], kmeans, method = "wss") +
-#   labs(title = "Elbow Method for Optimal Clusters")
-
-# Applying K-Means Clustering
-# set.seed(123)
-# kmeans_result <- kmeans(travel_reviews[, -1], centers = 3, nstart = 25)  # Adjust centers as needed
-
-# Add cluster labels to dataset
-# travel_reviews$Cluster <- as.factor(kmeans_result$cluster)
-
-# Visualize clusters using PCA
-# Select only numeric columns (excluding User ID and Cluster)
-# numeric_data <- travel_reviews[, -c(1, ncol(travel_reviews))]  # Removes User ID and Cluster
-
-# Visualize clusters using PCA
-# fviz_cluster(kmeans_result, data = numeric_data, geom = "point", ellipse.type = "convex") +
-  # labs(title = "K-Means Clustering of Traveler Preferences")
-
-
-
-
-
-
-
-
-
-```
-
-
 ```{r}
 
 # setting row names to the UserID
@@ -393,6 +360,23 @@ fviz_cluster(kmeans_result, data = data_clust, geom = "point")
 kmeans_result$centers
 
 ```
+
+**Insights:**
+
+*Optimal Number of Clusters*
+
+The silhouette plot indicates that 2 is the best number of clusters for the dataset, which is good because a higher silhouette width means better separation between clusters and tighter grouping within each cluster.
+
+*Cluster Plot*
+
+In above cluster plot we can see the 2 clusters that are well-separated visually,indicating that travellers can be grouped into two distinct preference groups based on their ratings.
+
+*Cluster Centers*
+The cluster centers show the average ratings for each category within each cluster. This helps us understand the characteristics of each cluster.
+
+
+Overall, the plot is a visual summary of your clustering results, indicating that there are distinct groups of travelers (each represented by a color) with similar rating profiles, and the centroids (blue triangles) give you a quick look at the average profile for each group.
+
 ```{r}
 
 # Hierarchical clustering
@@ -404,7 +388,7 @@ hc_result <- hcut(data_clust, k = optimal_Num_Clusters)
 fviz_dend(hc_result, rect = TRUE)
 
 ```
-
+# 
 
 # 9. Conclusion
 
