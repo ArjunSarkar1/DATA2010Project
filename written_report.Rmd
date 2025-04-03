@@ -196,13 +196,16 @@ ggplot(long_data.temp, aes(x = Rating, fill = Category, color = Category)) +
 Since `Parks/Picnic Spots` displayed an extreme peak, we analyze its rating distribution separately using a histogram.
 
 ```{r}
-# Histogram for Parks/Picnic Spots Ratings
-ggplot(long_data %>% filter(Category == "Parks/Picnic Spots"), 
+
+ggplot(long_data %>% 
+         filter(Category == "Parks/Picnic Spots", !is.na(Rating)), 
        aes(x = Rating)) +
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Ratings for Parks/Picnic Spots",
-       x = "Rating", y = "Count") + xlim(0,4) +
+       x = "Rating", y = "Count") +
+  coord_cartesian(xlim = c(0, 4)) +
   theme_minimal()
+
 ```
 
 **Insights**
@@ -535,7 +538,7 @@ ggplot(long_data %>% filter(Category == "Parks/Picnic Spots"),
        aes(x = Rating)) +
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Ratings for Parks/Picnic Spots",
-       x = "Rating", y = "Count") + xlim(0,4) +
+       x = "Rating", y = "Count") +  coord_cartesian(xlim = c(0, 4)) +
   theme_minimal()
 ```
 
