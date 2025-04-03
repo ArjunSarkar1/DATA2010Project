@@ -394,7 +394,7 @@ plot(dend, main = "Dendrogram of Traveler Preferences",
      frame.plot = TRUE, las = 2, cex = 0.7)
 
 # adding the horizontal cut-off line at appropriate height
-abline(h = 39, col = "purple", lwd = 2, lty = 3)
+abline(h = 39, col = "purple", lwd = 2, lty = 2)
 ```
 
 **Insights**
@@ -636,5 +636,5 @@ plot(dend, main = "Dendrogram of Traveler Preferences",
      frame.plot = TRUE, las = 2, cex = 0.7)
 
 # adding the horizontal cut-off line at appropriate height
-abline(h = 39, col = "purple", lwd = 2, lty = 3)
+abline(h = 39, col = "purple", lwd = 2, lty = 2)
 ```
