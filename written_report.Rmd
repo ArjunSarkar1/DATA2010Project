@@ -423,11 +423,7 @@ abline(h = 39, col = "purple", lwd = 2, lty = 2)
 
 *Most Common Preferences*
 
-- ???
-
-*Additional Insights from Correlation Analysis*
-
-- `Juice Bars` & `Parks/Picnic Spots` are highly correlated (+0.75), meaning travelers who like one tend to like the other. `Religious Institutions` & `Parks/Picnic Spots` show a strong negative correlation (-0.71), suggesting contrasting preferences among travelers.
+- `Juice Bars` & `Parks/Picnic Spots` are highly correlated (+0.75), meaning travelers who like one tend to like the other. `Religious Institutions` compared with outdoor locations such as `Parks/Picnic Spots`, `Juice Bars`, `Restaurants`, `Museums`, and `Resorts` tend to show negative correlation, suggesting that users that prefer religious places don't like outdoor locations.
 
 # 9. Appendix: All R Code
 
